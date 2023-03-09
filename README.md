@@ -2,8 +2,8 @@
 
 Students:
 
-* Surname_1, First_name_1
+* Marín Gonzalez, Miguel Ángel
 
-* Surname_2, First_name_2
+* Gómez Cayuela, Carlos
 
 Your deployed webapp at Fly.io|Heroku|... (task #6): <https://*********.***.***/>
