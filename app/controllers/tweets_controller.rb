@@ -1,6 +1,8 @@
 class TweetsController < ApplicationController
   before_action :set_tweet, only: %i[ show edit update destroy ]
 
+
+
   # GET /tweets or /tweets.json
   def index
     @tweets = Tweet.order(created_at: :desc).all
@@ -28,6 +30,12 @@ class TweetsController < ApplicationController
       if @tweet.save
         format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully created." }
         format.json { render :show, status: :created, location: @tweet }
+        if !session[:created_ids].nil?
+          session[:created_ids] << @tweet.id
+        else
+          session[:created_ids] = [@tweet.id]
+        end
+
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @tweet.errors, status: :unprocessable_entity }
@@ -50,11 +58,17 @@ class TweetsController < ApplicationController
 
   # DELETE /tweets/1 or /tweets/1.json
   def destroy
-    @tweet.destroy
+
 
     respond_to do |format|
-      format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
-      format.json { head :no_content }
+        if session[:created_ids].include?(@tweet.id)
+                    @tweet.destroy
+           format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
+          format.json { head :no_content }
+        else
+            format.html { redirect_to @tweet, notice: "You are not allowed to delete this tweet." }
+            format.json { head :forbidden }
+        end
     end
   end
 
