@@ -1,5 +1,5 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy ]
+  before_action :set_tweet, only: %i[ show edit update destroy like ]
 
 
 
@@ -70,6 +70,12 @@ class TweetsController < ApplicationController
             format.json { head :forbidden }
         end
     end
+  end
+
+  def like
+    @tweet.likes += 1
+    @tweet.save
+    redirect_to :root
   end
 
   private
