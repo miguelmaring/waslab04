@@ -1,16 +1,78 @@
-<p style="color: green"><%= notice %></p>
 
-<h1>Tweets</h1>
+<body class = "walloftweet">
+  <h1>Tweets</h1>
 
-<div id="tweets">
-  <% @tweets.each do |tweet| %>
-    <%= render tweet %>
-    <%= button_to 'Like this tweet', like_tweet_path(tweet), method: :put %>
-    <p>
-      <%= link_to "Show this tweet", tweet %>
-    </p>
-    <hr>
-  <% end %>
-</div>
 
-<%= link_to "New tweet", new_tweet_path %>
+  <div id="tweets">
+    <div class ="form_tweet">
+        <form action="/tweets" accept-charset="UTF-8" method="post">
+          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
+          <table border="0" cellpadding="2">
+            <tbody>
+              <tr>
+                <td>Your name:</td>
+                <td><input size="70" type="text" name="tweet[author]" id="tweet_author"></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Your tweet:</td>
+                <td><textarea rows="2" cols="70" name="tweet[content]" id="tweet_content"></textarea></td>
+                <td><input type="submit" name="commit" value="Tweet!" data-disable-with="Tweet!"></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+    </div>
+
+
+
+    <br>
+
+
+<% if !notice.nil? || !alert.nil?  %>
+  <% if !notice.nil? %>
+    <div class="mensaje_notice" id="notice"><%= notice %></div>
+  <%end%>
+  <%if !alert.nil?%>
+    <div class="mensaje_alerta" id="alert"><%= alert %></div>
+  <%end%>
+<%end%>
+
+<% d = nil%>
+
+    <% @tweets.each do |tweet| %>
+    <% if d != tweet.created_at.strftime("%A, %B %e, %Y") %>
+      <% d = tweet.created_at.strftime("%A, %B %e, %Y") %>
+      <h3>...... <%= d%> </h3>
+      <%end%>
+    <div class = "bloqoftweets">
+
+      <div class = "likes">
+        <p class ="likenumber"><%= tweet.likes%> </p>
+        <p class = "people"> people like this </p>
+
+
+        <%if session[:created_ids].present? && session[:created_ids].include?(tweet.id)%>
+        <%= button_to "Destroy", tweet, method: :delete %>
+        <%else%>
+        <%= button_to 'Like', like_tweet_path(tweet), method: :put %>
+        <%end%>
+
+
+      </div>
+      <div class = "message">
+
+        <h4> <em><%= tweet.author%></em> @ <%= tweet.created_at.strftime("%H:%M")%></h4>
+        <p><%= tweet.content%></p>
+
+      </div>
+
+
+
+      <!- <hr>
+      </div>
+    <% end %>
+
+  </div>
+
+</body>

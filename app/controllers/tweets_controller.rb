@@ -26,9 +26,10 @@ class TweetsController < ApplicationController
   def create
     @tweet = Tweet.new(tweet_params)
 
+
     respond_to do |format|
       if @tweet.save
-        format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully created." }
+        format.html { redirect_to root_path , notice: "Tweet was successfully created." }
         format.json { render :show, status: :created, location: @tweet }
         if !session[:created_ids].nil?
           session[:created_ids] << @tweet.id
@@ -37,8 +38,11 @@ class TweetsController < ApplicationController
         end
 
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @tweet.errors, status: :unprocessable_entity }
+        #format.html { render :new, status: :unprocessable_entity }
+        @tweet.errors.each do |error|
+          format.html { redirect_to root_path , alert: error.full_message }
+          format.json { render json: @tweet.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -62,7 +66,7 @@ class TweetsController < ApplicationController
 
     respond_to do |format|
         if session[:created_ids].include?(@tweet.id)
-                    @tweet.destroy
+            @tweet.destroy
            format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
           format.json { head :no_content }
         else
@@ -77,6 +81,9 @@ class TweetsController < ApplicationController
     @tweet.save
     redirect_to :root
   end
+
+
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
